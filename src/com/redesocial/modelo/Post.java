@@ -1,20 +1,25 @@
 package com.redesocial.modelo;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Post {
     private Integer id;
     private Usuario autor;
     private String conteudo;
     private LocalDateTime dataPublicacao;
+    private List<Usuario> curtidas;  // Lista de usuários que curtiram o post
+    private List<Comentario> comentarios; // Lista de comentários no post
 
     public Post(String conteudo, Usuario autor) {
         this.conteudo = conteudo;
         this.autor = autor;
         this.dataPublicacao = LocalDateTime.now();
+        this.curtidas = new ArrayList<>();
+        this.comentarios = new ArrayList<>();
     }
 
-    // Getters e setters
     public Integer getId() {
         return id;
     }
@@ -43,6 +48,32 @@ public class Post {
         return dataPublicacao;
     }
 
+    public void setDataPublicacao(LocalDateTime dataPublicacao) {
+        this.dataPublicacao = dataPublicacao;
+    }
+
+    public List<Usuario> getCurtidas() {
+        return curtidas;
+    }
+
+    public void adicionarCurtida(Usuario usuario) {
+        if (!curtidas.contains(usuario)) {
+            curtidas.add(usuario);
+        }
+    }
+
+    public void removerCurtida(Usuario usuario) {
+        curtidas.remove(usuario);
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void adicionarComentario(Comentario comentario) {
+        comentarios.add(comentario);
+    }
+
     @Override
     public String toString() {
         return "Post{" +
@@ -50,6 +81,8 @@ public class Post {
                 ", autor=" + autor.getUsername() +
                 ", conteudo='" + conteudo + '\'' +
                 ", dataPublicacao=" + dataPublicacao +
+                ", curtidas=" + curtidas.size() +
+                ", comentarios=" + comentarios.size() +
                 '}';
     }
 }
