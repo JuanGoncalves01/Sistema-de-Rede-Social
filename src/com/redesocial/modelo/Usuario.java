@@ -4,21 +4,25 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Post {
+public class Usuario {
     private Integer id;
-    private Usuario autor;
-    private String conteudo;
-    private LocalDateTime dataPublicacao;
-    private List<Comentario> comentarios;
+    private String nome;
+    private String username;
+    private String email;
+    private String senha;
+    private LocalDateTime dataCadastro;
+    private List<Post> posts;
 
-    public Post(Usuario autor, String conteudo) {
-        this.autor = autor;
-        this.conteudo = conteudo;
-        this.dataPublicacao = LocalDateTime.now();
-        this.comentarios = new ArrayList<>();
+    public Usuario(String nome, String username, String email, String senha) {
+        this.nome = nome;
+        this.username = username;
+        this.email = email;
+        this.senha = senha;
+        this.dataCadastro = LocalDateTime.now();
+        this.posts = new ArrayList<>();
     }
 
-    // Getters e Setters
+    // Getters e setters
     public Integer getId() {
         return id;
     }
@@ -27,40 +31,56 @@ public class Post {
         this.id = id;
     }
 
-    public Usuario getAutor() {
-        return autor;
+    public String getNome() {
+        return nome;
     }
 
-    public void setAutor(Usuario autor) {
-        this.autor = autor;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public String getConteudo() {
-        return conteudo;
+    public String getUsername() {
+        return username;
     }
 
-    public void setConteudo(String conteudo) {
-        this.conteudo = conteudo;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public LocalDateTime getDataPublicacao() {
-        return dataPublicacao;
+    public String getEmail() {
+        return email;
     }
 
-    public void setDataPublicacao(LocalDateTime dataPublicacao) {
-        this.dataPublicacao = dataPublicacao;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public List<Comentario> getComentarios() {
-        return comentarios;
+    public String getSenha() {
+        return senha;
     }
 
-    public void adicionarComentario(Comentario comentario) {
-        comentarios.add(comentario);
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public LocalDateTime getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public void setDataCadastro(LocalDateTime dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     @Override
     public String toString() {
-        return "Post{id=" + id + ", autor=" + autor.getUsername() + ", conteudo='" + conteudo + "'}";
+        return "Usuário [ID=" + id + ", Nome=" + nome + ", Username=" + username + "]";
     }
 }

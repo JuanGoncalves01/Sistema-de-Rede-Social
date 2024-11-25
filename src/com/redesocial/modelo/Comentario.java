@@ -16,6 +16,7 @@ public class Comentario {
         this.dataComentario = LocalDateTime.now();
     }
 
+    // Getters e setters
     public Integer getId() {
         return id;
     }
@@ -58,11 +59,6 @@ public class Comentario {
 
     @Override
     public String toString() {
-        return "Comentario{" +
-                "id=" + id +
-                ", autor=" + autor.getUsername() +
-                ", conteudo='" + conteudo + '\'' +
-                ", dataComentario=" + dataComentario +
-                '}';
+        return "Comentário de " + autor.getNome() + " em " + dataComentario + ": " + conteudo;
     }
 }

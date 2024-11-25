@@ -1,9 +1,8 @@
 package com.redesocial.gerenciador;
 
-import com.redesocial.modelo.Comentario;
 import com.redesocial.modelo.Post;
+import com.redesocial.modelo.Comentario;
 import com.redesocial.modelo.Usuario;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,35 +16,33 @@ public class GerenciadorPosts {
     }
 
     public void criarPost(Usuario autor, String conteudo) {
-        if (conteudo == null || conteudo.trim().isEmpty()) {
-            throw new IllegalArgumentException("O conteúdo do post não pode ser vazio.");
-        }
-        Post post = new Post(conteudo, autor);
+        Post post = new Post(autor, conteudo);
         post.setId(proximoId++);
         posts.add(post);
-        autor.adicionarPost(post); // Agora o método existe
     }
 
-    public List<Post> listarPostsPorUsuario(Usuario usuario) {
-        List<Post> postsUsuario = new ArrayList<>();
+    public List<Post> listarPosts(Usuario usuario) {
+        List<Post> usuarioPosts = new ArrayList<>();
         for (Post post : posts) {
-            if (post.getAutor().equals(usuario)) {
-                postsUsuario.add(post);
+            if (post.getAutor().getId().equals(usuario.getId())) {
+                usuarioPosts.add(post);
             }
         }
-        return postsUsuario;
+        return usuarioPosts;
     }
 
-    public void curtirPost(Post post, Usuario usuario) {
-        post.adicionarCurtida(usuario);
-    }
-
-    public void descurtirPost(Post post, Usuario usuario) {
-        post.removerCurtida(usuario);
-    }
-
-    public void comentarPost(Post post, Usuario autor, String conteudo) {
-        Comentario comentario = new Comentario(autor, conteudo, post);
+    public void comentar(Post post, Usuario autor, String conteudoComentario) {
+        Comentario comentario = new Comentario(autor, conteudoComentario, post);
         post.adicionarComentario(comentario);
+    }
+
+
+    public Post buscarPostPorId(int id) {
+        for (Post post : posts) {
+            if (post.getId() == id) {
+                return post;
+            }
+        }
+        return null;
     }
 }
