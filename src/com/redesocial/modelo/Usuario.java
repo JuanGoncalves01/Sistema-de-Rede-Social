@@ -1,7 +1,7 @@
 
 
 
-package com.redesocial.Modelo;
+package com.redesocial.modelo;
 
 import java.util.ArrayList;
 import java.util.List;
