@@ -1,27 +1,24 @@
 package com.redesocial.modelo;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Usuario {
+public class Post {
     private Integer id;
-    private String nome;
-    private String username;
-    private String email;
-    private String senha;
-    private List<Usuario> amigos;
-    private List<Post> posts; // Lista de posts do usuário
+    private Usuario autor;
+    private String conteudo;
+    private LocalDateTime dataPublicacao;
+    private List<Comentario> comentarios;
 
-    public Usuario(String nome, String username, String email, String senha) {
-        this.nome = nome;
-        this.username = username;
-        this.email = email;
-        this.senha = senha;
-        this.amigos = new ArrayList<>();
-        this.posts = new ArrayList<>(); // Inicializando a lista de posts
+    public Post(Usuario autor, String conteudo) {
+        this.autor = autor;
+        this.conteudo = conteudo;
+        this.dataPublicacao = LocalDateTime.now();
+        this.comentarios = new ArrayList<>();
     }
 
-    // Getters e setters
+    // Getters e Setters
     public Integer getId() {
         return id;
     }
@@ -30,61 +27,40 @@ public class Usuario {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public Usuario getAutor() {
+        return autor;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setAutor(Usuario autor) {
+        this.autor = autor;
     }
 
-    public String getUsername() {
-        return username;
+    public String getConteudo() {
+        return conteudo;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setConteudo(String conteudo) {
+        this.conteudo = conteudo;
     }
 
-    public String getEmail() {
-        return email;
+    public LocalDateTime getDataPublicacao() {
+        return dataPublicacao;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDataPublicacao(LocalDateTime dataPublicacao) {
+        this.dataPublicacao = dataPublicacao;
     }
 
-    public String getSenha() {
-        return senha;
+    public List<Comentario> getComentarios() {
+        return comentarios;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public List<Usuario> getAmigos() {
-        return amigos;
-    }
-
-    public void adicionarAmigo(Usuario amigo) {
-        amigos.add(amigo);
-    }
-
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void adicionarPost(Post post) {
-        posts.add(post); // Adiciona o post à lista de posts do usuário
+    public void adicionarComentario(Comentario comentario) {
+        comentarios.add(comentario);
     }
 
     @Override
     public String toString() {
-        return "Usuario{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+        return "Post{id=" + id + ", autor=" + autor.getUsername() + ", conteudo='" + conteudo + "'}";
     }
 }
