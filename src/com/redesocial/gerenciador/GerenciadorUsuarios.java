@@ -31,4 +31,23 @@ public class GerenciadorUsuarios {
     public List<Usuario> listarUsuarios() {
         return usuarios;
     }
+
+    // Para fazer o login
+
+    public Usuario loginUsuario(String username, String senha) {
+        for (Usuario usuario : usuarios) {
+            if (usuario.getUsername().equals(username) && usuario.getSenha().equals(senha)) {
+                return usuario;
+            }
+        }
+        return null;  // Retorna null caso não encontre usuário ou senha incorretos
+    }public Usuario login(String username, String senha) {
+        for (Usuario usuario : usuarios) {
+            if (usuario.getUsername().equals(username) && usuario.getSenha().equals(senha)) {
+                return usuario;
+            }
+        }
+        return null;  // Retorna null caso não encontre o usuário
+    }
+
 }

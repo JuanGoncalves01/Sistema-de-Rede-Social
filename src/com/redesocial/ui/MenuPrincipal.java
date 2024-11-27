@@ -2,7 +2,6 @@ package com.redesocial.ui;
 
 import com.redesocial.gerenciador.GerenciadorUsuarios;
 import com.redesocial.gerenciador.GerenciadorPosts;
-import com.redesocial.modelo.Comentario;
 import com.redesocial.modelo.Usuario;
 import com.redesocial.modelo.Post;
 
@@ -21,46 +20,104 @@ public class MenuPrincipal {
     }
 
     public void exibirMenu() {
-        while (true) {
-            System.out.println("1. Cadastrar Usuário");
-            System.out.println("2. Listar Usuários");
-            System.out.println("3. Criar Post");
-            System.out.println("4. Ver Posts");
-            System.out.println("5. Comentar Post");
-            System.out.println("6. Sair");
-            System.out.print("Escolha uma opção: ");
-            int opcao = scanner.nextInt();
-            scanner.nextLine();  // Limpar o buffer de nova linha
+        Usuario usuarioLogado = null;  // Variável para armazenar o usuário logado
 
-            switch (opcao) {
-                case 1:
-                    cadastrarUsuario();
-                    break;
-                case 2:
-                    listarUsuarios();
-                    break;
-                case 3:
-                    criarPost();
-                    break;
-                case 4:
-                    verPosts();
-                    break;
-                case 5:
-                    comentarPost();
-                    break;
-                case 6:
-                    System.out.println("Saindo...");
-                    return;
-                default:
-                    System.out.println("Opção inválida!");
+        while (true) {
+            if (usuarioLogado == null) {
+                // Exibe o menu principal (login ou cadastro)
+                System.out.println("1. Login");
+                System.out.println("2. Cadastrar novo usuário");
+                System.out.println("3. Sair");
+                int opcao = obterOpcaoMenu(3);  // Permitir opções entre 1 e 3
+
+                switch (opcao) {
+                    case 1:
+                        usuarioLogado = login();
+                        break;
+                    case 2:
+                        cadastrarUsuario();
+                        break;
+                    case 3:
+                        System.out.println("Saindo...");
+                        return;
+                    default:
+                        System.out.println("Opção inválida!");
+                }
+            } else {
+                // Menu do usuário logado
+                System.out.println("Bem-vindo, " + usuarioLogado.getNome());
+                System.out.println("1. Criar Post");
+                System.out.println("2. Ver Meu Perfil");
+                System.out.println("3. Buscar Usuários");
+                System.out.println("4. Gerenciar Amizades");
+                System.out.println("5. Ver Feed de Notícias");
+                System.out.println("6. Logout");
+                int opcao = obterOpcaoMenu(6);  // Permitir opções entre 1 e 6
+
+                switch (opcao) {
+                    case 1:
+                        criarPost(usuarioLogado);
+                        break;
+                    case 2:
+                        verPerfil(usuarioLogado);
+                        break;
+                    case 3:
+                        buscarUsuarios();
+                        break;
+                    case 4:
+                        gerenciarAmizades(usuarioLogado);
+                        break;
+                    case 5:
+                        verFeed(usuarioLogado);
+                        break;
+                    case 6:
+                        usuarioLogado = null;  // Logout
+                        System.out.println("Logout realizado com sucesso!");
+                        break;
+                    default:
+                        System.out.println("Opção inválida!");
+                }
             }
         }
+    }
+
+    private int obterOpcaoMenu(int maxOpcao) {
+        int opcao = -1;
+        while (opcao < 1 || opcao > maxOpcao) {
+            try {
+                System.out.print("Escolha uma opção: ");
+                opcao = scanner.nextInt();
+                scanner.nextLine();  // Limpar o buffer de nova linha
+                if (opcao < 1 || opcao > maxOpcao) {
+                    System.out.println("Opção inválida! Por favor, escolha uma opção válida.");
+                }
+            } catch (java.util.InputMismatchException e) {
+                System.out.println("Entrada inválida! Por favor, insira um número.");
+                scanner.nextLine();  // Limpar o buffer de entrada
+            }
+        }
+        return opcao;
+    }
+
+    private Usuario login() {
+        System.out.print("Digite seu nome de usuário: ");
+        String username = scanner.nextLine();
+        System.out.print("Digite sua senha: ");
+        String senha = scanner.nextLine();
+
+        Usuario usuarioLogado = gerenciadorUsuarios.login(username, senha);  // Método para fazer login
+        if (usuarioLogado != null) {
+            System.out.println("Login bem-sucedido!");
+        } else {
+            System.out.println("Nome de usuário ou senha incorretos!");
+        }
+        return usuarioLogado;
     }
 
     private void cadastrarUsuario() {
         System.out.print("Digite o nome: ");
         String nome = scanner.nextLine();
-        System.out.print("Digite o username: ");
+        System.out.print("Digite o nome de usuário: ");
         String username = scanner.nextLine();
         System.out.print("Digite o email: ");
         String email = scanner.nextLine();
@@ -71,102 +128,44 @@ public class MenuPrincipal {
         System.out.println("Usuário cadastrado com sucesso!");
     }
 
-    private void listarUsuarios() {
-        List<Usuario> usuarios = gerenciadorUsuarios.listarUsuarios();
-        if (usuarios.isEmpty()) {
-            System.out.println("Não há usuários cadastrados.");
-        } else {
-            System.out.println("Lista de usuários:");
-            for (Usuario usuario : usuarios) {
-                System.out.println(usuario);
-            }
-        }
+    private void criarPost(Usuario usuarioLogado) {
+        System.out.print("Digite o conteúdo do post: ");
+        String conteudo = scanner.nextLine();
+        gerenciadorPosts.criarPost(usuarioLogado, conteudo);
+        System.out.println("Post criado com sucesso!");
     }
 
-    private void criarPost() {
-        System.out.print("Digite o ID do usuário: ");
-        String input = scanner.nextLine();  // Captura a entrada como String
+    private void verPerfil(Usuario usuarioLogado) {
+        System.out.println("Perfil de " + usuarioLogado.getNome());
+        System.out.println("Nome: " + usuarioLogado.getNome());
+        System.out.println("Email: " + usuarioLogado.getEmail());
 
-        // Tenta converter a entrada para inteiro
-        int idUsuario = -1;  // Valor padrão inválido
-        try {
-            idUsuario = Integer.parseInt(input);  // Converte a string para inteiro
-        } catch (NumberFormatException e) {
-            System.out.println("Erro: O ID do usuário deve ser um número inteiro.");
-            return;  // Sai do método caso a conversão falhe
-        }
-
-        // Verifica se o usuário com esse ID existe
-        Usuario usuario = gerenciadorUsuarios.buscarPorId(idUsuario);
-        if (usuario != null) {
-            System.out.print("Digite o conteúdo do post: ");
-            String conteudo = scanner.nextLine();
-            gerenciadorPosts.criarPost(usuario, conteudo);
-            System.out.println("Post criado com sucesso!");
+        // Exibir lista de posts
+        System.out.println("Posts:");
+        List<Post> posts = gerenciadorPosts.listarPosts(usuarioLogado);
+        if (posts.isEmpty()) {
+            System.out.println("Nenhum post encontrado.");
         } else {
-            System.out.println("Usuário não encontrado.");
+            for (Post post : posts) {
+                System.out.println(post);
+            }
         }
+
+        // Aqui você pode adicionar mais funcionalidades, como editar perfil ou ver amigos
     }
 
-    private void verPosts() {
-        System.out.print("Digite o ID do usuário: ");
-        int idUsuario = scanner.nextInt();
-        scanner.nextLine();  // Limpar o buffer de nova linha
-        Usuario usuario = gerenciadorUsuarios.buscarPorId(idUsuario);
-
-        if (usuario != null) {
-            List<Post> posts = gerenciadorPosts.listarPosts(usuario);
-            if (posts.isEmpty()) {
-                System.out.println("Não há posts.");
-            } else {
-                for (Post post : posts) {
-                    System.out.println(post);
-                    if (post.getComentarios().isEmpty()) {
-                        System.out.println("Nenhum comentário.");
-                    } else {
-                        for (Comentario comentario : post.getComentarios()) {
-                            System.out.println("    " + comentario);
-                        }
-                    }
-                }
-            }
-        } else {
-            System.out.println("Usuário não encontrado.");
-        }
+    private void buscarUsuarios() {
+        // Lógica de busca de usuários (caso deseje implementar isso mais tarde)
+        System.out.println("Procurando usuários...");
     }
 
-    private void comentarPost() {
-        System.out.print("Digite o ID do usuário: ");
-        int idUsuario = scanner.nextInt();
-        scanner.nextLine();  // Limpar o buffer de nova linha
-        Usuario usuario = gerenciadorUsuarios.buscarPorId(idUsuario);
-
-        if (usuario != null) {
-            System.out.print("Digite o ID do post para comentar: ");
-            String inputPost = scanner.nextLine();  // Captura a entrada como String
-
-            // Tentando converter a entrada para um número inteiro
-            int idPost = -1;  // Valor padrão inválido
-            try {
-                idPost = Integer.parseInt(inputPost);  // Converte a string para inteiro
-            } catch (NumberFormatException e) {
-                System.out.println("Erro: O ID do post deve ser um número inteiro.");
-                return;  // Sai do método se a conversão falhar
-            }
-
-            Post post = gerenciadorPosts.buscarPostPorId(idPost);
-
-            if (post != null) {
-                System.out.print("Digite o conteúdo do comentário: ");
-                String conteudoComentario = scanner.nextLine();
-                gerenciadorPosts.comentar(post, usuario, conteudoComentario);
-                System.out.println("Comentário adicionado com sucesso!");
-            } else {
-                System.out.println("Post não encontrado.");
-            }
-        } else {
-            System.out.println("Usuário não encontrado.");
-        }
+    private void gerenciarAmizades(Usuario usuarioLogado) {
+        // Lógica de gerenciamento de amizades
+        System.out.println("Gerenciando amizades...");
     }
 
+    private void verFeed(Usuario usuarioLogado) {
+        // Exibir o feed de notícias (posts de amigos ou do próprio usuário)
+        System.out.println("Feed de notícias...");
+    }
 }

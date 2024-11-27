@@ -1,6 +1,5 @@
 package com.redesocial.modelo;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,16 +9,14 @@ public class Usuario {
     private String username;
     private String email;
     private String senha;
-    private LocalDateTime dataCadastro;
-    private List<Post> posts;
+    private List<Amizade> amizades;  // Lista de amizades
 
     public Usuario(String nome, String username, String email, String senha) {
         this.nome = nome;
         this.username = username;
         this.email = email;
         this.senha = senha;
-        this.dataCadastro = LocalDateTime.now();
-        this.posts = new ArrayList<>();
+        this.amizades = new ArrayList<>();  // Inicializa a lista de amizades
     }
 
     // Getters e setters
@@ -63,24 +60,26 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro;
+    public List<Amizade> getAmizades() {
+        return amizades;
     }
 
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
+    public void adicionarAmizade(Usuario amigo) {
+        if (!this.amizades.contains(new Amizade(this, amigo))) {
+            Amizade amizade = new Amizade(this, amigo);
+            this.amizades.add(amizade);
+            amigo.adicionarAmizade(this);  // Amizade é bidirecional
+        }
     }
 
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
+    public void removerAmizade(Usuario amigo) {
+        Amizade amizade = new Amizade(this, amigo);
+        this.amizades.remove(amizade);
+        amigo.removerAmizade(this);  // Remove a amizade bidirecionalmente
     }
 
     @Override
     public String toString() {
-        return "Usuário [ID=" + id + ", Nome=" + nome + ", Username=" + username + "]";
+        return "Usuario{id=" + id + ", nome='" + nome + "', username='" + username + "', email='" + email + "'}";
     }
 }
