@@ -1,171 +1,95 @@
 package com.redesocial.ui;
 
 import com.redesocial.gerenciador.GerenciadorUsuarios;
-import com.redesocial.gerenciador.GerenciadorPosts;
 import com.redesocial.modelo.Usuario;
-import com.redesocial.modelo.Post;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class MenuPrincipal {
+
     private GerenciadorUsuarios gerenciadorUsuarios;
-    private GerenciadorPosts gerenciadorPosts;
-    private Scanner scanner;
 
-    public MenuPrincipal(GerenciadorUsuarios gerenciadorUsuarios, GerenciadorPosts gerenciadorPosts) {
-        this.gerenciadorUsuarios = gerenciadorUsuarios;
-        this.gerenciadorPosts = gerenciadorPosts;
-        this.scanner = new Scanner(System.in);
+    // Construtor
+    public MenuPrincipal() {
+        this.gerenciadorUsuarios = new GerenciadorUsuarios();
     }
 
+    // 1. Exibir Menu Principal
     public void exibirMenu() {
-        Usuario usuarioLogado = null;  // Variável para armazenar o usuário logado
+        Scanner scanner = new Scanner(System.in);
+        int opcao;
 
-        while (true) {
-            if (usuarioLogado == null) {
-                // Exibe o menu principal (login ou cadastro)
-                System.out.println("1. Login");
-                System.out.println("2. Cadastrar novo usuário");
-                System.out.println("3. Sair");
-                int opcao = obterOpcaoMenu(3);  // Permitir opções entre 1 e 3
+        do {
+            System.out.println("===== Bem-vindo à Rede Social! =====");
+            System.out.println("1. Fazer Login");
+            System.out.println("2. Cadastrar Usuário");
+            System.out.println("0. Sair");
+            System.out.print("Escolha uma opção: ");
+            opcao = scanner.nextInt();
+            scanner.nextLine(); // Consumir nova linha
 
-                switch (opcao) {
-                    case 1:
-                        usuarioLogado = login();
-                        break;
-                    case 2:
-                        cadastrarUsuario();
-                        break;
-                    case 3:
-                        System.out.println("Saindo...");
-                        return;
-                    default:
-                        System.out.println("Opção inválida!");
-                }
-            } else {
-                // Menu do usuário logado
-                System.out.println("Bem-vindo, " + usuarioLogado.getNome());
-                System.out.println("1. Criar Post");
-                System.out.println("2. Ver Meu Perfil");
-                System.out.println("3. Buscar Usuários");
-                System.out.println("4. Gerenciar Amizades");
-                System.out.println("5. Ver Feed de Notícias");
-                System.out.println("6. Logout");
-                int opcao = obterOpcaoMenu(6);  // Permitir opções entre 1 e 6
-
-                switch (opcao) {
-                    case 1:
-                        criarPost(usuarioLogado);
-                        break;
-                    case 2:
-                        verPerfil(usuarioLogado);
-                        break;
-                    case 3:
-                        buscarUsuarios();
-                        break;
-                    case 4:
-                        gerenciarAmizades(usuarioLogado);
-                        break;
-                    case 5:
-                        verFeed(usuarioLogado);
-                        break;
-                    case 6:
-                        usuarioLogado = null;  // Logout
-                        System.out.println("Logout realizado com sucesso!");
-                        break;
-                    default:
-                        System.out.println("Opção inválida!");
-                }
+            switch (opcao) {
+                case 1:
+                    fazerLogin();
+                    break;
+                case 2:
+                    cadastrarUsuario();
+                    break;
+                case 0:
+                    System.out.println("Encerrando o programa...");
+                    break;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
             }
-        }
+        } while (opcao != 0);
     }
 
-    private int obterOpcaoMenu(int maxOpcao) {
-        int opcao = -1;
-        while (opcao < 1 || opcao > maxOpcao) {
-            try {
-                System.out.print("Escolha uma opção: ");
-                opcao = scanner.nextInt();
-                scanner.nextLine();  // Limpar o buffer de nova linha
-                if (opcao < 1 || opcao > maxOpcao) {
-                    System.out.println("Opção inválida! Por favor, escolha uma opção válida.");
-                }
-            } catch (java.util.InputMismatchException e) {
-                System.out.println("Entrada inválida! Por favor, insira um número.");
-                scanner.nextLine();  // Limpar o buffer de entrada
-            }
-        }
-        return opcao;
-    }
-
-    private Usuario login() {
-        System.out.print("Digite seu nome de usuário: ");
+    // 2. Fazer Login
+    private void fazerLogin() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Digite o username: ");
         String username = scanner.nextLine();
-        System.out.print("Digite sua senha: ");
-        String senha = scanner.nextLine();
-
-        Usuario usuarioLogado = gerenciadorUsuarios.login(username, senha);  // Método para fazer login
-        if (usuarioLogado != null) {
-            System.out.println("Login bem-sucedido!");
-        } else {
-            System.out.println("Nome de usuário ou senha incorretos!");
-        }
-        return usuarioLogado;
-    }
-
-    private void cadastrarUsuario() {
-        System.out.print("Digite o nome: ");
-        String nome = scanner.nextLine();
-        System.out.print("Digite o nome de usuário: ");
-        String username = scanner.nextLine();
-        System.out.print("Digite o email: ");
-        String email = scanner.nextLine();
         System.out.print("Digite a senha: ");
         String senha = scanner.nextLine();
 
-        gerenciadorUsuarios.cadastrarUsuario(nome, username, email, senha);
+        Usuario usuario = gerenciadorUsuarios.buscarPorUsername(username);
+
+        if (usuario != null && usuario.getSenha().equals(senha)) {
+            System.out.println("Login realizado com sucesso! Bem-vindo(a), " + usuario.getNome());
+            exibirMenuLogado(usuario);
+        } else {
+            System.out.println("Credenciais inválidas. Tente novamente.");
+        }
+    }
+
+    // 3. Cadastrar Usuário
+    private void cadastrarUsuario() {
+        Scanner scanner = new Scanner(System.in);
+
+        // Coletando dados do usuário
+        System.out.print("Digite seu nome: ");
+        String nome = scanner.nextLine();
+        System.out.print("Digite um username: ");
+        String username = scanner.nextLine();
+        System.out.print("Digite seu email: ");
+        String email = scanner.nextLine();
+        System.out.print("Digite uma senha: ");
+        String senha = scanner.nextLine();
+
+        // Criando um novo usuário com os dados informados
+        Usuario novoUsuario = new Usuario(nome, username, email, senha);
+
+        // Cadastrando o usuário no sistema
+        gerenciadorUsuarios.cadastrar(novoUsuario);
+
+        // Confirmando que o usuário foi cadastrado
         System.out.println("Usuário cadastrado com sucesso!");
     }
 
-    private void criarPost(Usuario usuarioLogado) {
-        System.out.print("Digite o conteúdo do post: ");
-        String conteudo = scanner.nextLine();
-        gerenciadorPosts.criarPost(usuarioLogado, conteudo);
-        System.out.println("Post criado com sucesso!");
-    }
 
-    private void verPerfil(Usuario usuarioLogado) {
-        System.out.println("Perfil de " + usuarioLogado.getNome());
-        System.out.println("Nome: " + usuarioLogado.getNome());
-        System.out.println("Email: " + usuarioLogado.getEmail());
-
-        // Exibir lista de posts
-        System.out.println("Posts:");
-        List<Post> posts = gerenciadorPosts.listarPosts(usuarioLogado);
-        if (posts.isEmpty()) {
-            System.out.println("Nenhum post encontrado.");
-        } else {
-            for (Post post : posts) {
-                System.out.println(post);
-            }
-        }
-
-        // Aqui você pode adicionar mais funcionalidades, como editar perfil ou ver amigos
-    }
-
-    private void buscarUsuarios() {
-        // Lógica de busca de usuários (caso deseje implementar isso mais tarde)
-        System.out.println("Procurando usuários...");
-    }
-
-    private void gerenciarAmizades(Usuario usuarioLogado) {
-        // Lógica de gerenciamento de amizades
-        System.out.println("Gerenciando amizades...");
-    }
-
-    private void verFeed(Usuario usuarioLogado) {
-        // Exibir o feed de notícias (posts de amigos ou do próprio usuário)
-        System.out.println("Feed de notícias...");
+    // 4. Exibir Menu Logado
+    private void exibirMenuLogado(Usuario usuario) {
+        MenuUsuario menuUsuario = new MenuUsuario(usuario);
+        menuUsuario.exibirMenu();
     }
 }

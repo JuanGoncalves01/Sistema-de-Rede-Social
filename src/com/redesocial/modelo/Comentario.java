@@ -1,19 +1,23 @@
 package com.redesocial.modelo;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Comentario {
+
     private Integer id;
     private Usuario autor;
     private String conteudo;
     private LocalDateTime dataComentario;
     private Post post;
 
-    public Comentario(Usuario autor, String conteudo, Post post) {
+    // Construtor completo
+    public Comentario(Integer id, Usuario autor, String conteudo, Post post) {
+        this.id = id;
         this.autor = autor;
         this.conteudo = conteudo;
-        this.post = post;
         this.dataComentario = LocalDateTime.now();
+        this.post = post;
     }
 
     // Getters e setters
@@ -57,8 +61,29 @@ public class Comentario {
         this.post = post;
     }
 
+    // toString formatado
     @Override
     public String toString() {
-        return "Comentário de " + autor.getNome() + " em " + dataComentario + ": " + conteudo;
+        return "Comentario{" +
+                "id=" + id +
+                ", autor=" + autor.getNome() +
+                ", conteudo='" + conteudo + '\'' +
+                ", dataComentario=" + dataComentario +
+                ", postId=" + (post != null ? post.getId() : "null") +
+                '}';
+    }
+
+    // equals e hashCode baseados no id
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comentario that = (Comentario) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

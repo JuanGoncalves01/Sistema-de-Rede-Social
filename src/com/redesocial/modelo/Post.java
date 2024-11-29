@@ -3,18 +3,24 @@ package com.redesocial.modelo;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Post {
+
     private Integer id;
     private Usuario autor;
     private String conteudo;
     private LocalDateTime dataPublicacao;
+    private List<Usuario> curtidas;
     private List<Comentario> comentarios;
 
-    public Post(Usuario autor, String conteudo) {
+    // Construtor completo
+    public Post(Integer id, Usuario autor, String conteudo) {
+        this.id = id;
         this.autor = autor;
         this.conteudo = conteudo;
         this.dataPublicacao = LocalDateTime.now();
+        this.curtidas = new ArrayList<>();
         this.comentarios = new ArrayList<>();
     }
 
@@ -23,7 +29,7 @@ public class Post {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -51,6 +57,14 @@ public class Post {
         this.dataPublicacao = dataPublicacao;
     }
 
+    public List<Usuario> getCurtidas() {
+        return curtidas;
+    }
+
+    public void setCurtidas(List<Usuario> curtidas) {
+        this.curtidas = curtidas;
+    }
+
     public List<Comentario> getComentarios() {
         return comentarios;
     }
@@ -59,12 +73,56 @@ public class Post {
         this.comentarios = comentarios;
     }
 
+    // Adicionar curtida
+    public void adicionarCurtida(Usuario usuario) {
+        if (!curtidas.contains(usuario)) {
+            curtidas.add(usuario);
+            System.out.println(usuario.getNome() + " curtiu o post!");
+        } else {
+            System.out.println("Usuário já curtiu o post.");
+        }
+    }
+
+    // Remover curtida
+    public void removerCurtida(Usuario usuario) {
+        if (curtidas.contains(usuario)) {
+            curtidas.remove(usuario);
+            System.out.println(usuario.getNome() + " removeu a curtida.");
+        } else {
+            System.out.println("Usuário não havia curtido o post.");
+        }
+    }
+
+    // Adicionar comentário
     public void adicionarComentario(Comentario comentario) {
-        this.comentarios.add(comentario);
+        comentarios.add(comentario);
+        System.out.println("Comentário adicionado com sucesso!");
+    }
+
+    // toString
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", autor=" + autor.getNome() +
+                ", conteudo='" + conteudo + '\'' +
+                ", dataPublicacao=" + dataPublicacao +
+                ", curtidas=" + curtidas.size() +
+                ", comentarios=" + comentarios.size() +
+                '}';
+    }
+
+    // equals e hashCode baseados no id
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return Objects.equals(id, post.id);
     }
 
     @Override
-    public String toString() {
-        return "Post de " + autor.getNome() + ": " + conteudo;
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
